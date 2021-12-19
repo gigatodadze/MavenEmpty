@@ -23,21 +23,23 @@ public class GetBook {
         RestAssured.given().queryParam("ISBN",response.isbn, ObjectMapperType.JAXB).when()
                 .get("https://bookstore.toolsqa.com/BookStore/v1/Book").then().log().all();
         Response resp = get("https://bookstore.toolsqa.com/BookStore/v1/Book");
-        if(resp.statusCode() == 200){
+        int statusCode = resp.getStatusCode();
+        Assert.assertEquals(statusCode,200);
+        if(statusCode == 200){
            RegistrationSuccessResponse successResponse =  new RegistrationSuccessResponse() ;
            Assert.assertEquals( successResponse.SuccessCode,"200");
-           Assert.assertEquals( resp.statusCode(),200);
+           Assert.assertEquals(statusCode,200);
         }
         else{
-            if(resp.statusCode() == 400){
                 RegistrationFailureResponse FailResponse =  new RegistrationFailureResponse() ;
-                Assert.assertEquals(resp.statusCode(),400);
-            }
-            else{
-                Assert.fail();
-            }
+                Assert.assertEquals(statusCode,400);
         }
 
+
+        String BookPublisher = response.publisher;
+        int BookPages = response.pages;
+        Assert.assertEquals(BookPublisher,"O'Reilly Media");
+        Assert.assertEquals(BookPages,234);
 
 //        Assert.assertTrue(Status.SUCCESS.matches(200));
 //        Assert.assertTrue(Status.FAILURE.matches(503));
